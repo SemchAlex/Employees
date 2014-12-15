@@ -1,0 +1,118 @@
+﻿<Window x:Class="Employees.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:viewModel="clr-namespace:Employees.ViewModel"
+        xmlns:view="clr-namespace:Employees.View"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        Title="Облік працівників" Height="auto" Width="auto">
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row ="0">
+                <Menu Height="20" VerticalAlignment="Top" Margin="0,0,4,0">
+                    <MenuItem Header="Головне меню" Height="20">
+                        <MenuItem Header="Зберегти дані" Command="{Binding Path=SaveCommand}"/>
+                        <MenuItem Header="Синхронізувати" Command="{Binding Path=SynchronizeCommand}"/>
+                        <MenuItem Header="Вихід" Command="{Binding Path=CloseAppCommand}"/>
+                    </MenuItem>
+                </Menu>
+
+            </Grid>
+
+            <TreeView Grid.Row="1" x:Name="MainTreeView" Margin="5">
+                <TreeViewItem Header="Працівники" IsExpanded="True">
+                    <TreeViewItem Header="Анкети співробітників" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=FocusedOnTabCommand}" CommandParameter="Workers"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Дерево співробітників" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=FocusedOnTabCommand}" CommandParameter="WorkersTree"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Сумарна заробітна плата" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=FocusedOnTabCommand}" CommandParameter="WorkersSalary"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem Header="Довідники" IsExpanded="True">
+                    <TreeViewItem Header="Посади" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=AddNewTabCommand}" CommandParameter="Position"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        </TreeViewItem>
+                        <TreeViewItem Header="Підрозділи" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=AddNewTabCommand}" CommandParameter="Department"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Ступені освіти" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=AddNewTabCommand}" CommandParameter="EducationLevel"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Спеціальності" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <command:EventToCommand Command="{Binding Path=AddNewTabCommand}" CommandParameter="Specialty"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TreeViewItem>
+                </TreeViewItem>
+            </TreeView>
+
+        </Grid>
+        <Grid Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TabControl x:Name="MyTabControl" Grid.Row="0"
+            ItemsSource="{Binding TabViewModels}" SelectedItem="{Binding SelectedTab}">
+                <TabControl.Resources>
+                    <DataTemplate DataType="{x:Type viewModel:WorkersProfilesViewModel}">
+                        <view:WorkersProfiles />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:DictionaryViewModel}">
+                        <view:DictionaryView />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:WorkersTreeViewModel}">
+                        <view:WorkersTree />
+                    </DataTemplate>
+                </TabControl.Resources>
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Header" Value="{Binding Header}" />
+                    </Style>
+                </TabControl.ItemContainerStyle>
+
+            </TabControl>
+            <ProgressBar Grid.Row="1" IsIndeterminate="{Binding Path=IsRequest}" Margin="2"/>
+        </Grid>
+    </Grid>
+</Window>
